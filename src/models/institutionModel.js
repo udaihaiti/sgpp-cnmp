@@ -47,6 +47,10 @@ module.exports = (sequelize2, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: true
         },
+        status:{
+            type: DataTypes.INTEGER,
+            allowNull: true 
+        },
         email: {
             type: DataTypes.STRING,
             unique: {
