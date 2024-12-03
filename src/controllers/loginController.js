@@ -37,7 +37,7 @@ exports.login = async (req, res) => {
         // Générer le token avec le statut
         const token = jwt.sign(
             {
-                institutionId: institution.institutionId,
+                institutionId: institution.id,
                 acronym: institution.acronym,
                 status: institution.status,
                 name: institution.name
