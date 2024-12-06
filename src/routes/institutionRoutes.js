@@ -18,7 +18,7 @@ router.delete('/:id', institutionController.deleteInstitution);
 router.get('/get_number_of_institution',institutionController.getNumberOfInstitutions);
 
 //reset
-router.put('/reset-password/:institutionId', institutionController.resetPassword);
+router.put('/reset-password/:id', institutionController.resetPassword);
 
 //get institution by id
 router.get('/:id', institutionController.getInstitutionById);
