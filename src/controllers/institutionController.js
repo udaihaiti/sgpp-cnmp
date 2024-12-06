@@ -125,26 +125,43 @@ exports.getNumberOfInstitutions = async (req, res) => {
 
 
 exports.resetPassword = async (req, res) => {
+exports.resetPassword = async (req, res) => {
     const { id } = req.params;
+
+    console.log("Début de la réinitialisation du mot de passe pour l'ID :", id);
+
+    // Vérification de l'ID
+    if (!id) {
+        console.error("ID non fourni ou invalide.");
+        return res.status(400).json({ error: 'ID non fourni ou invalide' });
+    }
 
     try {
         // Définir le nouveau mot de passe par défaut sans le crypter
         const newPassword = 'Pass@123';
 
-        // Mettre à jour l'institution avec le nouveau mot de passe et changer passwordMustBeChange à 1
+        console.log("Mot de passe par défaut défini :", newPassword);
+
+        // Mise à jour de la base de données
         const [updatedRows] = await Institution.update(
             { password: newPassword, passwordMustBeChange: 1 },
             { where: { id } }
         );
 
+        console.log("Nombre de lignes mises à jour :", updatedRows);
+
         // Vérifier si l'institution a été mise à jour
         if (updatedRows === 0) {
+            console.error("Aucune institution trouvée pour l'ID :", id);
             return res.status(404).json({ error: 'Institution non trouvée' });
         }
 
+        console.log("Mot de passe réinitialisé avec succès pour l'ID :", id);
         return res.status(200).json({ message: 'Mot de passe réinitialisé avec succès' });
     } catch (error) {
+        console.error("Erreur lors de la réinitialisation :", error);
         return res.status(500).json({ error: 'Une erreur est survenue lors de la réinitialisation du mot de passe' });
     }
 };
+
 
