@@ -125,7 +125,7 @@ exports.getNumberOfInstitutions = async (req, res) => {
 
 
 exports.resetPassword = async (req, res) => {
-    const { institutionId } = req.params;
+    const { id } = req.params;
 
     try {
         // Définir le nouveau mot de passe par défaut sans le crypter
@@ -134,7 +134,7 @@ exports.resetPassword = async (req, res) => {
         // Mettre à jour l'institution avec le nouveau mot de passe et changer passwordMustBeChange à 1
         const [updatedRows] = await Institution.update(
             { password: newPassword, passwordMustBeChange: 1 },
-            { where: { institutionId } }
+            { where: { id } }
         );
 
         // Vérifier si l'institution a été mise à jour
