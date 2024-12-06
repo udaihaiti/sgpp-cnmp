@@ -100,7 +100,7 @@ exports.deleteInstitution = async (req, res) => {
             return res.status(404).json({ message: 'Institution non trouvé.' });
         }
         await Institution.destroy({
-            where: { institutionId: institution.id }
+            where: { id: institution.id }
         });
         return res.status(200).json({ message: 'Institution supprimée avec succès.' });
     } catch (error) {
