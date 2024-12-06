@@ -123,8 +123,6 @@ exports.getNumberOfInstitutions = async (req, res) => {
     }
 };
 
-
-exports.resetPassword = async (req, res) => {
 exports.resetPassword = async (req, res) => {
     const { id } = req.params;
 
