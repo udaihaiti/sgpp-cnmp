@@ -19,15 +19,17 @@ exports.createDocument = async (req, res) => {
     }
 
     try {
-        const institution = await Institution.findByPk(req.body.institutionId);
+        const institution = await Institution.findByPk(req.body.id);
+
+        console.log(institution);
 
         if (!institution) {
             return res.status(404).json({ error: "Institution non trouvée." });
         }
 
-        const institutionName = normalizeString(institution.name);
+        const institutionName = normalizeString(institution.nomext);
         const fiscalYear = req.body.fiscal_year || 'unknown';
-        const originalFileName = path.parse(req.file.originalname).name;
+        const originalFileName = path.parse(req.file.originalname).nomext;
         const dateSubmission = new Date().toISOString().split('T')[0];
 
         const newFileName = `${institutionName}-${originalFileName}-${dateSubmission}.pdf`;
@@ -96,7 +98,7 @@ exports.createDocument = async (req, res) => {
         });
 
         return res.status(200).json({ message: "Document créé avec succès.", document });
-    } catch (error) {
+    } catch (error) {     
         return res.status(500).json({ error: "Erreur lors de la création du document.", data: error });
     }
 };
