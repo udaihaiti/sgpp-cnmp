@@ -138,11 +138,14 @@ exports.resetPassword = async (req, res) => {
         // Définir le nouveau mot de passe par défaut sans le crypter
         const newPassword = 'Pass@123';
 
-        console.log("Mot de passe par défaut défini :", newPassword);
+         const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+        console.log("Mot de passe par défaut défini :", hashedPassword);
 
         // Mise à jour de la base de données
         const [updatedRows] = await Institution.update(
-            { password: newPassword, passwordMustBeChange: 1 },
+            { password: hashedPassword, passwordMustBeChange: 1 },
             { where: { id } }
         );
 
