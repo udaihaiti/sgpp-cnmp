@@ -40,7 +40,7 @@ exports.login = async (req, res) => {
                 institutionId: institution.id,
                 acronym: institution.acronym,
                 status: institution.status,
-                name: institution.name
+                name: institution.nomext
             },
             privateKey,
             { expiresIn: '7d' }
