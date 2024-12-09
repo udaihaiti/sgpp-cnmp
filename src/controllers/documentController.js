@@ -30,7 +30,7 @@ exports.createDocument = async (req, res) => {
             return res.status(404).json({ error: "Institution non trouvée." });
         }
 
-        console.log("Institution trouvée:", institution.name);
+        console.log("Institution trouvée:", institution.nomext);
 
         const institutionName = normalizeString(institution.name);
         const fiscalYear = req.body.fiscal_year || 'unknown';
