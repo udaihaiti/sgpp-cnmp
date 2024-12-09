@@ -14,37 +14,48 @@ function normalizeString(str) {
 }
 
 exports.createDocument = async (req, res) => {
+    console.log("Début de la méthode createDocument.");
+    
     if (!req.file || !req.file.originalname.endsWith('.pdf')) {
+        console.error("Erreur: Le fichier n'est pas un PDF valide.");
         return res.status(400).json({ error: "Le fichier doit être un document PDF." });
     }
 
     try {
-        const institution = await Institution.findByPk(req.body.id);
-
-        console.log(institution);
+        console.log("Recherche de l'institution avec l'ID:", req.body.institutionId);
+        const institution = await Institution.findByPk(req.body.institutionId);
 
         if (!institution) {
+            console.error("Erreur: Institution non trouvée pour l'ID:", req.body.institutionId);
             return res.status(404).json({ error: "Institution non trouvée." });
         }
 
-        const institutionName = normalizeString(institution.nomext);
+        console.log("Institution trouvée:", institution.name);
+
+        const institutionName = normalizeString(institution.name);
         const fiscalYear = req.body.fiscal_year || 'unknown';
-        const originalFileName = path.parse(req.file.originalname).nomext;
+        const originalFileName = path.parse(req.file.originalname).name;
         const dateSubmission = new Date().toISOString().split('T')[0];
 
+        console.log("Génération du nom du fichier.");
         const newFileName = `${institutionName}-${originalFileName}-${dateSubmission}.pdf`;
 
         const uploadsDir = path.join(__dirname, '../uploads');
+        console.log("Répertoire des uploads:", uploadsDir);
 
         if (!fs.existsSync(uploadsDir)) {
+            console.log("Répertoire des uploads non existant, création...");
             fs.mkdirSync(uploadsDir, { recursive: true });
         }
 
         const fiscalYearDir = path.join(uploadsDir, fiscalYear);
         const newPath = path.join(fiscalYearDir, newFileName);
+        console.log("Répertoire de l'année fiscale:", fiscalYearDir);
+        console.log("Chemin du nouveau fichier:", newPath);
 
         fs.mkdirSync(fiscalYearDir, { recursive: true });
 
+        console.log("Recherche d'un document existant avec les mêmes critères.");
         const existingDocument = await Document.findOne({
             where: {
                 institutionId: req.body.institutionId,
@@ -54,15 +65,19 @@ exports.createDocument = async (req, res) => {
         });
 
         if (existingDocument) {
+            console.log("Document existant trouvé:", existingDocument.filename);
             const existingFilePath = existingDocument.filepath;
 
             if (fs.existsSync(existingFilePath)) {
+                console.log("Suppression de l'ancien fichier:", existingFilePath);
                 fs.unlinkSync(existingFilePath);
             }
 
+            console.log("Suppression de l'enregistrement du document dans la base.");
             await Document.destroy({ where: { documentId: existingDocument.documentId } });
         }
 
+        console.log("Déplacement du fichier téléchargé vers:", newPath);
         fs.renameSync(req.file.path, newPath);
 
         const documentData = {
@@ -73,6 +88,7 @@ exports.createDocument = async (req, res) => {
             status: req.body.status || 3
         };
 
+        console.log("Création du document dans la base de données:", documentData);
         const document = await Document.create(documentData);
 
         const mailOptions = {
@@ -88,20 +104,23 @@ exports.createDocument = async (req, res) => {
             ]
         };
 
-        // Envoyer l'email
+        console.log("Envoi de l'email avec les options:", mailOptions);
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
-                console.log('Erreur lors de l\'envoi de l\'email:', error);
+                console.error("Erreur lors de l'envoi de l'email:", error);
             } else {
-                console.log('Email envoyé: ' + info.response);
+                console.log("Email envoyé avec succès:", info.response);
             }
         });
 
+        console.log("Document créé avec succès:", document);
         return res.status(200).json({ message: "Document créé avec succès.", document });
-    } catch (error) {     
+    } catch (error) {
+        console.error("Erreur lors de la création du document:", error);
         return res.status(500).json({ error: "Erreur lors de la création du document.", data: error });
     }
 };
+
 
 exports.getAllDocuments = async (req, res) => {
     try {
