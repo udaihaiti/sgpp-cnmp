@@ -32,9 +32,9 @@ exports.createDocument = async (req, res) => {
 
         console.log("Institution trouvée:", institution.nomext);
 
-        const institutionName = normalizeString(institution.name);
+        const institutionName = normalizeString(institution.nomext);
         const fiscalYear = req.body.fiscal_year || 'unknown';
-        const originalFileName = path.parse(req.file.originalname).name;
+        const originalFileName = path.parse(req.file.originalname).nomext;
         const dateSubmission = new Date().toISOString().split('T')[0];
 
         console.log("Génération du nom du fichier.");
