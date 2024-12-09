@@ -49,7 +49,7 @@ exports.login = async (req, res) => {
         return res.status(200).json({
             message: "Connexion réussie.",
             token,
-            institutionName: institution.name,
+            institutionName: institution.nomext,
             passwordMustBeChange: institution.passwordMustBeChange,
             institutionId: institution.institutionId
         });
