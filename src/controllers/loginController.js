@@ -40,6 +40,7 @@ exports.login = async (req, res) => {
                 institutionId: institution.id,
                 acronym: institution.acronym,
                 status: institution.status,
+                passwordMustBeChange:institution.passwordMustBeChange,
                 name: institution.nomext
             },
             privateKey,
